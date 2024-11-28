@@ -18,10 +18,13 @@ import { getUuid } from '../../utils/jsPsych/module/randomization';
 import { ElMessage } from 'element-plus';
 import Instr_prac from './instr/instr_prac.vue';
 import Instr_form from './instr/instr_form.vue';
+import Preload from '../../component/plugin/Preload.vue';
+import { useCheckBrowserInfo } from '../../store/browserCheck';
 
 const jspsych = JsPsych.instance;
 const timeline: TimelineArray = [];
 
+const cbi = useCheckBrowserInfo();
 const noises = (function () {
     const len = 10000; const res: number[] = [];
     for (let i = 0; i < len; i++) {
@@ -29,7 +32,7 @@ const noises = (function () {
     }
     return res;
 })(); // 噪音的索引值
-const block_len = 70; // 单个block的试次数量
+const block_len = 10; // 单个block的试次数量
 const trial_max = 1000; // 总共trial试次限制
 let tmpA = deepCopy(noises);
 
@@ -44,8 +47,10 @@ const fixation = {
 };
 
 timeline.push({
+    component: h(Preload)
+}, {
     component: h(EnterFullScreen, {
-        model: false
+        model: true
     })
 });
 
@@ -145,6 +150,7 @@ timeline.push({
         }
     }),
     on_start() {
+        jspsych.data.write(Object.assign({}, cbi.browser, { trial_type: "browser_check", save: true }));
         new Session().offlineSave(jspsych.data.get().filter({ save: true }).csv(), getUuid());
     }
 });
