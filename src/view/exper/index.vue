@@ -13,13 +13,12 @@ import FaceSelectAndroid from '../../component/plugin/ImgSelectAndroid.vue';
 import { deepCopy } from '../../utils/jsPsych/module/utils';
 import Rest from '../../component/plugin/Rest.vue';
 import EnterFullScreen from '../../component/plugin/EnterFullScreen.vue';
-import Session from '../../utils/dataSaver/session';
-import { getUuid } from '../../utils/jsPsych/module/randomization';
 import { ElMessage } from 'element-plus';
 import Instr_prac from './instr/instr_prac.vue';
 import Instr_form from './instr/instr_form.vue';
 import Preload from '../../component/plugin/Preload.vue';
 import { useCheckBrowserInfo } from '../../store/browserCheck';
+import Naodao from '../../utils/dataSaver/naodao';
 
 const jspsych = JsPsych.instance;
 const timeline: TimelineArray = [];
@@ -32,8 +31,8 @@ const noises = (function () {
     }
     return res;
 })(); // 噪音的索引值
-const block_len = 10; // 单个block的试次数量
-const trial_max = 1000; // 总共trial试次限制
+const block_len = 70; // 单个block的试次数量
+const trial_max = 200; // 总共trial试次限制
 let tmpA = deepCopy(noises);
 
 const fixation = {
@@ -143,6 +142,10 @@ timeline.push({
     })
 });
 
+const nd = new Naodao();
+nd.getData = () => {
+    return jspsych.data.get().filter({ save: true }).csv();
+}
 timeline.push({
     component: h(EndExp, {
         onEnd() {
@@ -151,7 +154,7 @@ timeline.push({
     }),
     on_start() {
         jspsych.data.write(Object.assign({}, cbi.browser, { trial_type: "browser_check", save: true }));
-        new Session().offlineSave(jspsych.data.get().filter({ save: true }).csv(), getUuid());
+        nd.save();
     }
 });
 

@@ -12,15 +12,18 @@ const end = (c: boolean) => {
 <template>
     <div class="plugin-box">
         <div class="button-box">
-            <div @click="end(true)">继续</div>
-            <div @click="end(false)" style="background-color: var(--fc-error-bg);">结束</div>
-            <div @click="end(true)">继续</div>
+            <div class="text">休息一下吧，当你休息完成后，点击继续按钮</div>
+            <div class="button" @click="end(true)">继续</div>
         </div>
     </div>
 </template>
 
 <style scoped>
-.button-box > div {
+.text {
+    font-size: 24px;
+    line-height: 32px;
+}
+.button {
     width: 96px;
     height: 48px;
     margin: 48px 0;
