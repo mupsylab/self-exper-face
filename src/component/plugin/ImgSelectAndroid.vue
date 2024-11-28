@@ -16,7 +16,7 @@ const canvasHeight = ref(300);
 const isPortrait = ref(false); // 是不是横屏
 const resizeCanvas = () => {
     const { clientWidth, clientHeight } = document.documentElement;
-    canvasWidth.value = clientWidth * 0.8;
+    canvasWidth.value = Math.min(clientWidth * 0.8, 800);
     canvasHeight.value = clientHeight * 0.8;
     // 根据设备屏幕尺寸调整画布大小
     if (clientHeight > clientWidth) {

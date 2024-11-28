@@ -71,14 +71,17 @@ export class Timeline extends TimelineNode {
             if (this.cursor_variable && this.cursor_variable % this.timeline_variables.length === 0) {
                 // 变量循环完毕
                 this.cursor_variable = 0;
-                if(loop_function && loop_function(new DataCollection(this.getResults()))) {
-                    for(const chlid of this.childNodes) {
-                        if(chlid instanceof Timeline) chlid.reset();
-                    }
-                    return 0;
-                }
                 this.cursor_repetition += 1;
                 if(this.cursor_repetition >= repetitions) {
+                    // 需要结束当前轮次，判断是否需要重置
+                    if(loop_function && loop_function(new DataCollection(this.getResults()))) {
+                        for(const chlid of this.childNodes) {
+                            if(chlid instanceof Timeline) chlid.reset();
+                        }
+                        this.reset();
+                        return 0;
+                    }
+
                     this.status = TimelineNodeStatus.COMPLETED;
                     return 0;
                 }
